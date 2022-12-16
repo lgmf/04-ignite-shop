@@ -1,4 +1,4 @@
-import { styled } from "../../styles";
+import { styled } from "../../../styles";
 
 export const Container = styled("aside", {
   position: "fixed",
@@ -113,26 +113,5 @@ export const Summary = styled("div", {
     "&:nth-child(even)": {
       textAlign: "right",
     },
-  },
-});
-
-export const CheckoutButton = styled("button", {
-  backgroundColor: "$green500",
-  border: 0,
-  color: "$white",
-  borderRadius: 8,
-  padding: "1.25rem",
-  cursor: "pointer",
-  fontWeight: "bold",
-  fontSize: "$md",
-
-  "&:disabled": {
-    backgroundColor: "$gray300",
-    color: "$gray500",
-    cursor: "not-allowed",
-  },
-
-  "&:not(:disabled):hover": {
-    backgroundColor: "$green300",
   },
 });

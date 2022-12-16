@@ -1,22 +1,15 @@
 import { ReactNode } from "react";
 import { useAtom } from "jotai";
 
-import { Header } from "../components/Header";
-import { ShoppingCart } from "../components/ShoppingCart";
-import { showShoppingCartAtom } from "../store";
-import { styled } from "../styles";
+import { showShoppingCartAtom } from "../../store";
+
+import { LayoutContainer, MainContainer } from "./styles";
+import { Header } from "./Header";
+import { ShoppingCart } from "./ShoppingCart";
 
 interface PrivateLayoutProps {
   children: ReactNode;
 }
-
-export const Container = styled("div", {
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "flex-start",
-  minHeight: "100vh",
-  paddingTop: "2.5rem",
-});
 
 export function PrivateLayout({ children }: PrivateLayoutProps) {
   const [showShoppingCart, setShowShoppingCart] = useAtom(showShoppingCartAtom);
@@ -26,12 +19,12 @@ export function PrivateLayout({ children }: PrivateLayoutProps) {
   }
 
   return (
-    <Container>
+    <LayoutContainer>
       <Header />
 
-      {children}
+      <MainContainer css={{ paddingBottom: "2rem" }}>{children}</MainContainer>
 
       <ShoppingCart open={showShoppingCart} onClose={handleCloseShoppingCart} />
-    </Container>
+    </LayoutContainer>
   );
 }

@@ -16,6 +16,7 @@ import {
   removeItemFromCartAtom,
 } from "../../store";
 import { PrivateLayout } from "../../components/PrivateLayout";
+import { Button } from "../../components/Button";
 
 interface ProductProps {
   product: {
@@ -66,11 +67,14 @@ export default function Product({ product }: ProductProps) {
 
             <p>{product.description}</p>
 
-            {isAlreadyAddedToCart ? (
-              <button onClick={handleRemoveFromCart}>Remover da sacola</button>
-            ) : (
-              <button onClick={handleAddToCart}>Colocar na sacola</button>
-            )}
+            <Button
+              css={{ marginTop: "auto" }}
+              onClick={
+                isAlreadyAddedToCart ? handleRemoveFromCart : handleAddToCart
+              }
+            >
+              {isAlreadyAddedToCart ? "Remover da sacola" : "Colocar na sacola"}
+            </Button>
           </ProductDetails>
         </ProductContainer>
       </PrivateLayout>

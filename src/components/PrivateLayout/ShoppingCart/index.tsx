@@ -8,15 +8,17 @@ import {
   shoppingCartAtom,
   shoppingCartQuantityAtom,
   shoppingCartTotalAtom,
-} from "../../store";
-import { formatPrice } from "../../utils/price";
+} from "../../../store";
+
+import { formatPrice } from "../../../utils/price";
+import { Button } from "../../Button";
+import { Typography } from "../../Typography";
 
 import {
   Container,
   CloseButton,
   ItemsList,
   ItemsListItem,
-  CheckoutButton,
   Summary,
 } from "./styles";
 
@@ -65,21 +67,31 @@ export function ShoppingCart({ open, onClose }: ShoppingCartProps) {
 
       <p>Sacola de compras</p>
 
-      <ItemsList>
-        {shoppingCart.map((item) => (
-          <ItemsListItem key={item.id}>
-            <div className="img">
-              <Image src={item.imageUrl} width={100} height={100} alt="" />
-            </div>
+      {shoppingCart.length ? (
+        <ItemsList>
+          {shoppingCart.map((item) => (
+            <ItemsListItem key={item.id}>
+              <div className="img">
+                <Image src={item.imageUrl} width={100} height={100} alt="" />
+              </div>
 
-            <div className="details">
-              <span>{item.name}</span>
-              <p>{formatPrice(item.price)}</p>
-              <button onClick={handleRemoveFromCart(item.id)}>Remover</button>
-            </div>
-          </ItemsListItem>
-        ))}
-      </ItemsList>
+              <div className="details">
+                <span>{item.name}</span>
+                <p>{formatPrice(item.price)}</p>
+                <button onClick={handleRemoveFromCart(item.id)}>Remover</button>
+              </div>
+            </ItemsListItem>
+          ))}
+        </ItemsList>
+      ) : (
+        <Typography
+          variant="caption"
+          color="secondary"
+          css={{ textAlign: "center" }}
+        >
+          Sua sacola esta vazia
+        </Typography>
+      )}
 
       <Summary>
         <span>Quantidade</span>
@@ -91,12 +103,12 @@ export function ShoppingCart({ open, onClose }: ShoppingCartProps) {
         <p>{formatPrice(total)}</p>
       </Summary>
 
-      <CheckoutButton
-        disabled={isCreatingCheckoutSession}
+      <Button
+        disabled={quantity < 1 || isCreatingCheckoutSession}
         onClick={handleCheckout}
       >
         Finalizar compra
-      </CheckoutButton>
+      </Button>
     </Container>
   );
 }

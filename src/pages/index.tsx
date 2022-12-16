@@ -5,16 +5,9 @@ import { GetStaticProps } from "next";
 import Link from "next/link";
 import Stripe from "stripe";
 import { Bag, Trash } from "phosphor-react";
-import { useKeenSlider } from "keen-slider/react";
-import "keen-slider/keen-slider.min.css";
 import { useAtomValue, useSetAtom } from "jotai";
 import { stripe } from "../lib/stripe";
-import {
-  HomeContainer,
-  IconButton,
-  Product,
-  ProductFooter,
-} from "../styles/pages/home";
+import { HomeContainer, Product, ProductFooter } from "../styles/pages/home";
 import { formatPrice } from "../utils/price";
 import {
   addItemToCartAtom,
@@ -22,6 +15,7 @@ import {
   removeItemFromCartAtom,
 } from "../store";
 import { PrivateLayout } from "../components/PrivateLayout";
+import { IconButton } from "../components/IconButton";
 
 interface Product {
   id: string;
@@ -35,13 +29,6 @@ interface HomeProps {
 }
 
 export default function Home({ products }: HomeProps) {
-  const [sliderRef] = useKeenSlider({
-    slides: {
-      perView: 2,
-      spacing: 48,
-    },
-  });
-
   const addItemToCart = useSetAtom(addItemToCartAtom);
   const removeItemFromCart = useSetAtom(removeItemFromCartAtom);
   const checkAlreadyAddedToCart = useAtomValue(checkAlreadyAddedToCartAtom);
@@ -75,7 +62,7 @@ export default function Home({ products }: HomeProps) {
       </Head>
 
       <PrivateLayout>
-        <HomeContainer ref={sliderRef} className="keen-slider">
+        <HomeContainer>
           {products.map((product) => {
             const isAlreadyAddedToCart = checkAlreadyAddedToCart(product.id);
 
@@ -85,11 +72,11 @@ export default function Home({ products }: HomeProps) {
                 key={product.id}
                 prefetch={false}
               >
-                <Product className="keen-slider__slide">
+                <Product>
                   <Image
                     src={product.imageUrl}
-                    width={520}
-                    height={480}
+                    width={380}
+                    height={350}
                     alt=""
                   />
 
@@ -102,6 +89,7 @@ export default function Home({ products }: HomeProps) {
                     {isAlreadyAddedToCart ? (
                       <IconButton
                         title="Remover do carrinho"
+                        size="lg"
                         color="danger"
                         onClick={handleRemoveFromCart(product.id)}
                       >
@@ -110,6 +98,7 @@ export default function Home({ products }: HomeProps) {
                     ) : (
                       <IconButton
                         title="Adicionar ao carrinho"
+                        size="lg"
                         onClick={handleAddToCart(product)}
                       >
                         <Bag />

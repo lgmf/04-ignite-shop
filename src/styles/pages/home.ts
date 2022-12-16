@@ -1,11 +1,10 @@
 import { styled } from "..";
 
 export const HomeContainer = styled("main", {
-  display: "flex",
-  width: "100%",
-  maxWidth: "calc(100vw - ((100vw - 1180px) / 2))",
-  marginLeft: "auto",
-  minHeight: 656,
+  maxWidth: "100%",
+  display: "grid",
+  gridTemplateColumns: "repeat(3, 1fr)",
+  gap: "1rem",
 });
 
 export const ProductFooter = styled("footer", {
@@ -47,36 +46,8 @@ export const ProductFooter = styled("footer", {
   },
 });
 
-export const IconButton = styled("button", {
-  backgroundColor: "$green500",
-  color: "$white",
-  padding: "0.75rem",
-  border: "none",
-  borderRadius: 6,
-  cursor: "pointer",
-  width: "$md",
-
-  svg: {
-    fontSize: "$2xl",
-  },
-
-  "&:disabled": {
-    backgroundColor: "$gray300",
-    color: "$gray500",
-    cursor: "not-allowed",
-  },
-
-  variants: {
-    color: {
-      danger: {
-        backgroundColor: "$errorLight",
-      },
-    },
-  },
-});
-
 export const Product = styled("div", {
-  background: "linear-gradient(180deg, #1ea483 0%, #7465d4 100%)",
+  background: "$gradientPrimary",
   borderRadius: 8,
   cursor: "pointer",
   position: "relative",
