@@ -1,3 +1,8 @@
+import {
+  Hydrate,
+  QueryClient,
+  QueryClientProvider,
+} from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { AppProps } from "next/app";
 import Router from "next/router";
@@ -5,16 +10,12 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 
 import { globalStyles } from "../styles/global";
-import { Container } from "../styles/pages/app";
-
-import { ShoppingCartProvider } from "../context/ShoppingCart";
-import { Header } from "../components/Header";
-import { ShoppingCart } from "../components/ShoppingCart";
+import { StoreDevtools, Provider } from "../store";
 
 globalStyles();
 
 function App({ Component, pageProps }: AppProps) {
-  const [showShoppingCart, setShowShoppingCart] = useState(false);
+  const [queryClient] = useState(() => new QueryClient());
 
   useEffect(() => {
     const handleRouteStart = () => NProgress.start();
@@ -31,27 +32,17 @@ function App({ Component, pageProps }: AppProps) {
     };
   }, []);
 
-  function handleOpenShoppingCart() {
-    setShowShoppingCart(true);
-  }
-
-  function handleCloseShoppingCart() {
-    setShowShoppingCart(false);
-  }
-
   return (
-    <ShoppingCartProvider>
-      <Container>
-        <Header onShowShoppingCartClick={handleOpenShoppingCart} />
-
-        <Component {...pageProps} />
-
-        <ShoppingCart
-          open={showShoppingCart}
-          onClose={handleCloseShoppingCart}
-        />
-      </Container>
-    </ShoppingCartProvider>
+    <>
+      <StoreDevtools />
+      <QueryClientProvider client={queryClient}>
+        <Hydrate state={pageProps.dehydratedState}>
+          <Provider queryClient={queryClient}>
+            <Component {...pageProps} />
+          </Provider>
+        </Hydrate>
+      </QueryClientProvider>
+    </>
   );
 }
 

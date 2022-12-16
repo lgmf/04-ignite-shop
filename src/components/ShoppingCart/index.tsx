@@ -1,9 +1,14 @@
 import axios from "axios";
+import { useAtom } from "jotai";
 import Image from "next/image";
 import { X } from "phosphor-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
-import { useShoppingCart } from "../../context/ShoppingCart";
+import {
+  shoppingCartAtom,
+  shoppingCartQuantityAtom,
+  shoppingCartTotalAtom,
+} from "../../store";
 import { formatPrice } from "../../utils/price";
 
 import {
@@ -24,16 +29,13 @@ export function ShoppingCart({ open, onClose }: ShoppingCartProps) {
   const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] =
     useState(false);
 
-  const shoppingCart = useShoppingCart();
+  const [shoppingCart, setShoppingCart] = useAtom(shoppingCartAtom);
+  const [quantity] = useAtom(shoppingCartQuantityAtom);
+  const [total] = useAtom(shoppingCartTotalAtom);
 
   function handleRemoveFromCart(id: string) {
     return () => {
-      shoppingCart.dispatch({
-        type: "REMOVE_ITEM",
-        payload: {
-          id,
-        },
-      });
+      setShoppingCart((prev) => prev.filter((item) => item.id !== id));
     };
   }
 
@@ -41,7 +43,7 @@ export function ShoppingCart({ open, onClose }: ShoppingCartProps) {
     try {
       setIsCreatingCheckoutSession(true);
 
-      const productIds = shoppingCart.items.map((item) => item.id);
+      const productIds = shoppingCart.map((item) => item.id);
 
       const response = await axios.post("/api/checkout", { productIds });
 
@@ -64,7 +66,7 @@ export function ShoppingCart({ open, onClose }: ShoppingCartProps) {
       <p>Sacola de compras</p>
 
       <ItemsList>
-        {shoppingCart.items.map((item) => (
+        {shoppingCart.map((item) => (
           <ItemsListItem key={item.id}>
             <div className="img">
               <Image src={item.imageUrl} width={100} height={100} alt="" />
@@ -82,11 +84,11 @@ export function ShoppingCart({ open, onClose }: ShoppingCartProps) {
       <Summary>
         <span>Quantidade</span>
 
-        <span>{shoppingCart.quantity} itens</span>
+        <span>{quantity} itens</span>
 
         <p>Valor total</p>
 
-        <p>{formatPrice(shoppingCart.total)}</p>
+        <p>{formatPrice(total)}</p>
       </Summary>
 
       <CheckoutButton

@@ -11,7 +11,11 @@
   "dependencies": {
     "@next/font": "^13.0.6",
     "@stitches/react": "^1.2.8",
+    "@tanstack/query-core": "^4.20.4",
+    "@tanstack/react-query": "^4.20.4",
     "axios": "^0.27.2",
+    "jotai": "^1.11.2",
+    "jotai-tanstack-query": "^0.4.0",
     "keen-slider": "^6.7.0",
     "next": "^13.0.6",
     "nprogress": "^0.2.0",

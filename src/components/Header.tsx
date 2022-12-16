@@ -1,15 +1,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Bag } from "phosphor-react";
+import { useAtomValue, useSetAtom } from "jotai";
 
 import { styled } from "../styles";
 import logoImg from "../assets/logo.svg";
 
-import { useShoppingCart } from "../context/ShoppingCart";
-
-interface HeaderProps {
-  onShowShoppingCartClick: () => void;
-}
+import { shoppingCartQuantityAtom, showShoppingCartAtom } from "../store";
 
 const StyledHeader = styled("header", {
   padding: "2rem 0",
@@ -28,6 +25,18 @@ const ShowShoppingCartButton = styled("button", {
   borderRadius: 6,
   cursor: "pointer",
   position: "relative",
+
+  "&:disabled": {
+    cursor: "not-allowed",
+
+    "&::after": {
+      content: "none",
+    },
+
+    svg: {
+      color: "$gray500",
+    },
+  },
 
   "&::after": {
     position: "absolute",
@@ -49,10 +58,15 @@ const ShowShoppingCartButton = styled("button", {
   },
 });
 
-export function Header({ onShowShoppingCartClick }: HeaderProps) {
-  const { quantity } = useShoppingCart();
+export function Header() {
+  const quantity = useAtomValue(shoppingCartQuantityAtom);
+  const setShowShoppingCart = useSetAtom(showShoppingCartAtom);
 
   const hasItemsOnCart = quantity > 0;
+
+  function handleOpenShoppingCart() {
+    setShowShoppingCart(true);
+  }
 
   return (
     <StyledHeader>
@@ -62,16 +76,15 @@ export function Header({ onShowShoppingCartClick }: HeaderProps) {
 
       <ShowShoppingCartButton
         disabled={!hasItemsOnCart}
-        title="Mostrar o carrinho"
+        title={
+          hasItemsOnCart ? "Mostrar o carrinho" : "Nenhum item no carrinho"
+        }
+        onClick={handleOpenShoppingCart}
         css={{
           "&::after": {
-            content: hasItemsOnCart ? `${quantity}` : "none",
-          },
-          svg: {
-            color: hasItemsOnCart ? "$gray300" : "$gray500",
+            content: `${quantity}`,
           },
         }}
-        onClick={onShowShoppingCartClick}
       >
         <Bag />
       </ShowShoppingCartButton>

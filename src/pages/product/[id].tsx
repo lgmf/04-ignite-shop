@@ -2,14 +2,20 @@ import { GetStaticPaths, GetStaticProps } from "next";
 import Image from "next/image";
 import Head from "next/head";
 import Stripe from "stripe";
+import { useAtomValue, useSetAtom } from "jotai";
 import { stripe } from "../../lib/stripe";
 import {
   ImageContainer,
   ProductContainer,
   ProductDetails,
 } from "../../styles/pages/product";
-import { useShoppingCart } from "../../context/ShoppingCart";
 import { formatPrice } from "../../utils/price";
+import {
+  addItemToCartAtom,
+  checkAlreadyAddedToCartAtom,
+  removeItemFromCartAtom,
+} from "../../store";
+import { PrivateLayout } from "../../components/PrivateLayout";
 
 interface ProductProps {
   product: {
@@ -23,22 +29,23 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
-  const shoppingCart = useShoppingCart();
+  const addItemToCart = useSetAtom(addItemToCartAtom);
+  const removeItemFromCart = useSetAtom(removeItemFromCartAtom);
+  const checkAlreadyAddedToCart = useAtomValue(checkAlreadyAddedToCartAtom);
 
-  const isAlreadyAddedToCart = shoppingCart.items.some(
-    (item) => item.id === product.id
-  );
+  const isAlreadyAddedToCart = checkAlreadyAddedToCart(product.id);
 
   function handleAddToCart() {
-    shoppingCart.dispatch({
-      type: "ADD_ITEM",
-      payload: {
-        id: product.id,
-        imageUrl: product.imageUrl,
-        name: product.name,
-        price: product.price,
-      },
+    addItemToCart({
+      id: product.id,
+      imageUrl: product.imageUrl,
+      name: product.name,
+      price: product.price,
     });
+  }
+
+  function handleRemoveFromCart() {
+    removeItemFromCart({ itemIdToRemove: product.id });
   }
 
   return (
@@ -47,29 +54,33 @@ export default function Product({ product }: ProductProps) {
         <title>{product.name} | Ignite Shop</title>
       </Head>
 
-      <ProductContainer>
-        <ImageContainer>
-          <Image src={product.imageUrl} width={520} height={480} alt="" />
-        </ImageContainer>
+      <PrivateLayout>
+        <ProductContainer>
+          <ImageContainer>
+            <Image src={product.imageUrl} width={520} height={480} alt="" />
+          </ImageContainer>
 
-        <ProductDetails>
-          <h1>{product.name}</h1>
-          <span>{formatPrice(product.price)}</span>
+          <ProductDetails>
+            <h1>{product.name}</h1>
+            <span>{formatPrice(product.price)}</span>
 
-          <p>{product.description}</p>
+            <p>{product.description}</p>
 
-          <button disabled={isAlreadyAddedToCart} onClick={handleAddToCart}>
-            Colocar na sacola
-          </button>
-        </ProductDetails>
-      </ProductContainer>
+            {isAlreadyAddedToCart ? (
+              <button onClick={handleRemoveFromCart}>Remover da sacola</button>
+            ) : (
+              <button onClick={handleAddToCart}>Colocar na sacola</button>
+            )}
+          </ProductDetails>
+        </ProductContainer>
+      </PrivateLayout>
     </>
   );
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [{ params: { id: "prod_MLH5Wy0Y97hDAC" } }],
+    paths: [{ params: { id: "prod_MywnCZVJpYzCXO" } }],
     fallback: "blocking",
   };
 };

@@ -1,6 +1,7 @@
 import { styled } from "..";
 
 export const SuccessContainer = styled("main", {
+  minHeight: "100vh",
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
@@ -24,7 +25,7 @@ export const SuccessContainer = styled("main", {
 
   a: {
     display: "block",
-    marginTop: "5rem",
+    margin: "5rem",
     fontSize: "$lg",
     color: "$green500",
     textDecoration: "none",

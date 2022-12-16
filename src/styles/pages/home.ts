@@ -45,24 +45,32 @@ export const ProductFooter = styled("footer", {
       color: "$green300",
     },
   },
+});
 
-  button: {
-    backgroundColor: "$green500",
-    color: "$white",
-    padding: "0.75rem",
-    border: "none",
-    borderRadius: 6,
-    cursor: "pointer",
-    width: "$md",
+export const IconButton = styled("button", {
+  backgroundColor: "$green500",
+  color: "$white",
+  padding: "0.75rem",
+  border: "none",
+  borderRadius: 6,
+  cursor: "pointer",
+  width: "$md",
 
-    svg: {
-      fontSize: "$2xl",
-    },
+  svg: {
+    fontSize: "$2xl",
+  },
 
-    "&:disabled": {
-      backgroundColor: "$gray300",
-      color: "$gray500",
-      cursor: "not-allowed",
+  "&:disabled": {
+    backgroundColor: "$gray300",
+    color: "$gray500",
+    cursor: "not-allowed",
+  },
+
+  variants: {
+    color: {
+      danger: {
+        backgroundColor: "$errorLight",
+      },
     },
   },
 });

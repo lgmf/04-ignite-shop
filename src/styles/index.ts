@@ -24,6 +24,10 @@ export const {
       green300: "#00b37e",
 
       gradientPrimary: "linear-gradient(180deg, #1ea483 0%, #7465d4 100%)",
+
+      errorLight: "#ef5350",
+      errorMain: "#d32f2f",
+      errorDark: "#c62828",
     },
 
     fontSizes: {

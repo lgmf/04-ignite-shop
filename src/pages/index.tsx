@@ -4,14 +4,24 @@ import Head from "next/head";
 import { GetStaticProps } from "next";
 import Link from "next/link";
 import Stripe from "stripe";
-import { Bag } from "phosphor-react";
+import { Bag, Trash } from "phosphor-react";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-
+import { useAtomValue, useSetAtom } from "jotai";
 import { stripe } from "../lib/stripe";
-import { HomeContainer, Product, ProductFooter } from "../styles/pages/home";
-import { useShoppingCart } from "../context/ShoppingCart";
+import {
+  HomeContainer,
+  IconButton,
+  Product,
+  ProductFooter,
+} from "../styles/pages/home";
 import { formatPrice } from "../utils/price";
+import {
+  addItemToCartAtom,
+  checkAlreadyAddedToCartAtom,
+  removeItemFromCartAtom,
+} from "../store";
+import { PrivateLayout } from "../components/PrivateLayout";
 
 interface Product {
   id: string;
@@ -32,27 +42,30 @@ export default function Home({ products }: HomeProps) {
     },
   });
 
-  const shoppingCart = useShoppingCart();
+  const addItemToCart = useSetAtom(addItemToCartAtom);
+  const removeItemFromCart = useSetAtom(removeItemFromCartAtom);
+  const checkAlreadyAddedToCart = useAtomValue(checkAlreadyAddedToCartAtom);
 
   function handleAddToCart(product: Product) {
     return (event: MouseEvent<HTMLButtonElement>) => {
       event.preventDefault();
       event.stopPropagation();
 
-      shoppingCart.dispatch({
-        type: "ADD_ITEM",
-        payload: {
-          id: product.id,
-          imageUrl: product.imageUrl,
-          name: product.name,
-          price: product.price,
-        },
+      addItemToCart({
+        id: product.id,
+        imageUrl: product.imageUrl,
+        name: product.name,
+        price: product.price,
       });
     };
   }
 
-  function disableAddToCartButton(product: Product) {
-    return shoppingCart.items.some((item) => item.id === product.id);
+  function handleRemoveFromCart(id: string) {
+    return (event: MouseEvent<HTMLButtonElement>) => {
+      event.preventDefault();
+      event.stopPropagation();
+      removeItemFromCart({ itemIdToRemove: id });
+    };
   }
 
   return (
@@ -61,36 +74,54 @@ export default function Home({ products }: HomeProps) {
         <title>Home | Ignite Shop</title>
       </Head>
 
-      <HomeContainer ref={sliderRef} className="keen-slider">
-        {products.map((product) => {
-          return (
-            <Link
-              href={`/product/${product.id}`}
-              key={product.id}
-              prefetch={false}
-            >
-              <Product className="keen-slider__slide">
-                <Image src={product.imageUrl} width={520} height={480} alt="" />
+      <PrivateLayout>
+        <HomeContainer ref={sliderRef} className="keen-slider">
+          {products.map((product) => {
+            const isAlreadyAddedToCart = checkAlreadyAddedToCart(product.id);
 
-                <ProductFooter>
-                  <div>
-                    <strong>{product.name}</strong>
-                    <span>{formatPrice(product.price)}</span>
-                  </div>
+            return (
+              <Link
+                href={`/product/${product.id}`}
+                key={product.id}
+                prefetch={false}
+              >
+                <Product className="keen-slider__slide">
+                  <Image
+                    src={product.imageUrl}
+                    width={520}
+                    height={480}
+                    alt=""
+                  />
 
-                  <button
-                    title="Adicionar ao carrinho"
-                    onClick={handleAddToCart(product)}
-                    disabled={disableAddToCartButton(product)}
-                  >
-                    <Bag />
-                  </button>
-                </ProductFooter>
-              </Product>
-            </Link>
-          );
-        })}
-      </HomeContainer>
+                  <ProductFooter>
+                    <div>
+                      <strong>{product.name}</strong>
+                      <span>{formatPrice(product.price)}</span>
+                    </div>
+
+                    {isAlreadyAddedToCart ? (
+                      <IconButton
+                        title="Remover do carrinho"
+                        color="danger"
+                        onClick={handleRemoveFromCart(product.id)}
+                      >
+                        <Trash />
+                      </IconButton>
+                    ) : (
+                      <IconButton
+                        title="Adicionar ao carrinho"
+                        onClick={handleAddToCart(product)}
+                      >
+                        <Bag />
+                      </IconButton>
+                    )}
+                  </ProductFooter>
+                </Product>
+              </Link>
+            );
+          })}
+        </HomeContainer>
+      </PrivateLayout>
     </>
   );
 }

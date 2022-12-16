@@ -9,6 +9,7 @@ import {
   ImageList,
   SuccessContainer,
 } from "../styles/pages/success";
+import logoImg from "../assets/logo.svg";
 
 interface SuccessProps {
   costumerName: string;
@@ -29,6 +30,10 @@ export default function Success({ costumerName, products }: SuccessProps) {
       </Head>
 
       <SuccessContainer>
+        <Link href="/">
+          <Image src={logoImg} alt="" />
+        </Link>
+
         <ImageList>
           {products.map((product, index) => (
             <ImageContainer
